@@ -1,0 +1,115 @@
+
+\graphicspath{{Introduction/images/}}
+
+\chapter{Introduction}
+\label{chapter:Introduction}
+
+Recent advances on digital imaging modalities
+and computation have enabled an emerging field 
+studying the biological variability of human anatomy. 
+This field is called CA (computational anatomy).
+
+CA as defined by \cite{Grenander1998} has three principal aspects: construction of
+anatomical manifolds or shape modeling by points, curves, surfaces and volumes;
+comparison of these models; and statistical analysis of shape variability.
+
+The statistics allows for inference and hypothesis testing of disease states.
+This is done using the statistical description
+to determine the probability of a hypothesis to be true or false.
+In other words, a new sample is classified as diseased or healthy 
+according to its shape.
+
+The automated construction of anatomical models 
+has been the main interest of many research groups around the world. 
+These models are based on algorithms and equations that capture the behavior
+and/or the appearance of the object.
+
+Besides hypothesis testing, the models are also used for 
+various types of simulation procedures such as simulation of medical images.
+Medical imaging consists in acquiring details of the interior of the human body by using different techniques. 
+Among these techniques we find MRI (magnetic resonance imaging), CT (computed tomography),
+US (ultrasound) or PET (positron emission tomography). 
+They are widely used to diagnose and plan treatment for patients with the information acquired in the image.
+These imaging devices can be very expensive, they require regular maintenance and are used only by specialized staff. 
+In this context, image simulation is defined as the process of producing a synthesized image 
+from a specific modality using the geometry of a virtual object. 
+The virtual object in question could be an organ or a system of organs.
+
+One purpose of image simulation is to improve imaging devices.
+This is done by acquiring better understanding of image acquisition phenomena
+or calibrating a specific set of parameters that will produce a desired outcome 
+and then translate the experience to the real device.
+Another use for simulated images is to evaluate the performance of segmentation algorithms as 
+the results can be directly correlated to the virtual model.
+
+Other types of simulations are done to understand biological process,
+muscle deformation, cardiac cycle, respiratory cycle, cortical folding etc. 
+
+Knowing all the potential applications on the medical domain,
+the current challenge today is to create a virtual human, in other words,
+to create a model capable of integrating anatomical, physiological, mechanical,  
+biological and physical information. 
+This virtual human could be used to improve simulation procedures
+and also hypothesis testing for disease states. 
+
+The first objective of this dissertation 
+is to provide a technique generic enough to model
+the shape of various organs, 
+giving the possibility to include information 
+from different spatial scales, imaging modalities or 
+other sources.
+To model the shape of an object, there are many approaches available.
+Notably deformable models have proven to be successful. 
+They are able to automate, to a certain degree, 
+image segmentation of structures and they also produce statistics on the deformations. 
+Unfortunately, some of the techniques 
+don't provide the necessary mechanisms for further use on simulation procedures. 
+Chapter \ref{chapter:3DModels} summarizes the important features of the techniques 
+frequently used to model the geometry of objects.
+The choice of the modeling technique should meet some specific requirements 
+that will be used to model the human cerebral cortex. 
+The representation should support the extremely 
+folded geometry of the cortex
+and also be capable to locate 
+internal features or 
+provide a sense of orientation at every place inside the object. 
+
+Chapter \ref{chapter:cortexModeling} explains 
+a methodology to create a cortex representation. 
+The modeling technique relates to 
+the true shape of the cortex which is that of a folded slab
+as most of the state of the art methods only use surface information or 
+model the folds locally. 
+
+The second objective 
+is to provide a mechanism
+to synthesize solids, meaning 
+surface and internal properties 
+of the object must be available.
+The procedure to synthesize solids uses small two dimensions
+textured images as exemplars. The synthesized result is visually and statistically 
+similar to the exemplar.
+The textured images can be from various sources 
+including images from the web, 
+histology and complex ones such as 
+MRI physical parameters acquired with relaxometry techniques.
+The generated solids can be used
+to enhance the visualization and/or internal properties of the models created
+using the techniques described in Chapter \ref{chapter:3DModels}.
+Chapter \ref{chapter:textureSynthesis} explains the solid synthesis procedure.
+
+The third objective is to use
+the geometric description enhanced 
+with internal properties such as physical parameters
+and generate simulated MRIs.
+Chapter \ref{chapter:MRISimulation} explains MRI simulation and 
+uses the techniques for geometric modeling and
+solid synthesis to create some virtual objects.
+These objects are used to simulate MRIs, which are
+validated with well known segmentation algorithms. 
+
+Chapter \ref{chapter:Conclusions} concludes the current research study 
+and future perspectives are declared. 
+
+
+\newpage

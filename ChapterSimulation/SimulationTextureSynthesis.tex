@@ -1,0 +1,37 @@
+\subsection{Introduction}
+\label{sec:intro}
+
+Medical imaging consists in acquiring details of the interior of the human body by using different techniques. 
+Among these techniques we find MRI (magnetic resonance imaging), CT (computed tomography),
+US (ultra sounds) or PET (positron emission tomography). They are widely used to diagnose, plan and treat patients with the information acquired in the image.
+Nowadays, it is desired to achieve higher resolution levels in the acquisitions,
+therefore experimental imaging such as $\mu{MRI}, \mu{CT}$ or $SR \mu{CT}$ (Synchrotron Radiation X-Rays Computed Micro-Tomography) 
+are still evolving. Unfortunately, they are not used in vivo because of problems related to dose radiation.
+$SR \mu{CT}$ is able to produce images up to 0.28 $\mu{m}$, presenting
+unique characteristics in terms of spatial density resolution and signal to noise ratio.
+Consequently, it is the reference tool to investigate the micro structure of bone samples \cite{revol2002}.
+
+These kinds of experimental imaging devices are very expensive, they require regular maintenance and are used only by specialized staff. 
+The produced data is very limited since in some occasions is private, thus making it unavailable to other research purposes, 
+or the acquisition protocols are performed sparingly. Image simulation is an alternative to produce low cost datasets of an image modality. 
+There are two basic approaches. The first one consists in 
+applying the physics present in the acquisition process to a digital model \cite{CHAR-09}.
+The digital model can be used afterwards to validate and improve segmentation or quantification algorithms.
+
+The second approach is related to texture synthesis, it was intended to mimic mammograms \cite{Castella:08} or
+to designing scaffolds based on the bone micro structure \cite{DBLP:conf/smi/HoldsteinFPB09}. %Designing scaffolds represents a growing interest 
+%in bio-materials, specially in tissue engineering, as they are used to support the stem cell structure 
+%and help the process of tissue reconstruction 
+
+In this paper, we propose a method related to the second approach, which is generic enough to reproduce 3D $\mu{MR}$ and $SR \mu{CT}$ images. 
+The texture synthesis algorithm is similar to the one proposed by Kopf \cite{KFCODLW07}, it starts with a 2D reference texture
+provided by slices extracted from a $\mu{MR}$ or $SR \mu{CT}$ acquisition and by means of an energy optimization process 
+described by Kwatra \cite{kwatra:2005:SIGGRAPH}, the method is able to create a 3D texture that resembles the 2D image in every slice.
+
+The texture synthesis optimization has the advantage of creating models, using one or multiple samples 
+to constrain the view perpendicular to each axis direction, extra channels can be added to the exemplar, like distance maps 
+which are useful to code large textured features \cite{Lefebvre:2006:ATS:1141911.1141921}.
+The method also maintains the global statistics of the sample by using a histogram matching approach \cite{ROLLAND2000}.
+The following section describes our method to synthesize realistic 3D virtual images from slices of $\mu{MR}$, $SR \mu{CT}$ acquisitions.
+In section \ref{sec:ResultsAndEvaluation}, we present the generated virtual images. 
+The accuracy of the synthetic images is assessed and discussed by comparing statistical and morphological parameters computed from the virtual and the real images. 

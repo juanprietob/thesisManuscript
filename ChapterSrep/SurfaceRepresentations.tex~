@@ -1,0 +1,383 @@
+
+Surface representation techniques can be divided 
+broadly into two categories: landmark representations and boundary representation or b-reps. 
+I overview the most prominent authors in the following section.
+
+
+\subsection{Landmark representations}
+
+Landmark representations were proposed by \cite{kendall1989survey}. 
+Since landmark representation is a very effective method to perform shape analysis,
+there has been an extensive study of their geometry and statistics \cite{bookstein1991morphometric}, \cite{dryden1993multivariate}, \cite{james1993revolution}, \cite{small1996statistical}.
+
+Kendall understood shape as a set of prominent features (landmarks) in the objects and gave the following definition: 
+
+\begin{definition}
+ \label{def:shape}
+ \textit{Shape} is all the geometrical information that remains when
+ location, scale, and rotational effects are filtered out from an object.
+\end{definition}
+ 
+This filtering is accomplished by Procrustes analysis. 
+
+Procrustes analysis is done to match the landmarks 
+by putting them on a common frame and derive valid information 
+from their displacement. 
+This is equivalent to understand how the shape deforms
+on the population. 
+
+I will briefly describe how a Procrustes analysis is done.
+To filter the location, the object must be centered on its geometric center or centroid.
+Let $O = \{x_i: i < k, k \in N\} \in R^n$ be the set of landmarks that compose an object.
+The centroid of $O$ is defined in Equation \ref{equ:centroid}. 
+
+\begin{equation}
+  C(O) = \frac{\sum_i^k O(i)}{k}
+  \label{equ:centroid}
+\end{equation}
+
+The object is then translated by $C(O)$ i.e., $O_t = \{x_i - C(O): i < k, k \in N\} \in R^n$.
+We will see in Section \ref{sec:medialRepresentations} that in some cases centering in the centroid 
+is not adequate to perform shape analysis.
+
+To filter the scale or make $O$ unit scale, the object is normalized.
+Scale is defined as a linear transformation that enlarges or shrinks an object.
+To remove the scale of an object the root mean square distance from the points to the centroid must be equal to 1.
+The calculation of this coefficient is defined in Equation \ref{equ:norm}.
+
+\begin{equation}
+ N(O) = \sqrt{\frac{\sum_i^k (O(i) - C(O))^2}{k}}  
+ \label{equ:norm}
+\end{equation}
+
+The object $O$ is scaled by $1/N(O)$: $O_s = \{O(i)/N(O): i < k, k \in N\} \in R^n$.
+
+The last step is to filter the rotation, 
+which is defined as moving an object around a point or axis of rotation, as shown in figure \ref{fig:Rotation}.
+In this example, the object is rotated $45^o$ clockwise and the axis of rotation
+is the crossproduct between the $x$ and $y$ axes.
+
+\begin{figure} 
+ \centering 
+ \epsfig{file = rotation.eps, width = 8cm}
+ \caption[Rotated figure.]{Figure rotated 45 degrees clockwise.}
+ \label{fig:Rotation}  
+\end{figure}
+
+Since a rotation can be expressed in matrix form,
+the alignment problem can be done 
+iteratively by minimizing the distance from the points 
+in two objects as shown in Equation \ref{equ:align1}.
+
+\begin{eqnarray}
+  [\hat{\Omega}] = \operatorname*{arg\,min}_{\Omega} || \Omega O_i - TO_i||
+  \label{equ:align1}
+\end{eqnarray}
+where $\Omega$ is a rotation matrix around the centroid of the object.
+$O$ is an object and $TO$ is a target object or template, both objects are centered on the origin and have unit scale.
+The problem consists in finding a matrix $\Omega$ such that the distance from points in $O$ is minimum
+to the points in $TO$.
+
+Using matched landmarks 
+in a population of objects, this enables the study of shape by 
+analyzing the displacements of the landmarks across the population. 
+
+Further improvements of landmark representations sought to produce constrained diffeomorphic deformations i.e., 
+differentiable maps that have a differentiable inverse. 
+Large deformations, as mapping a template to a folded structure like the cortex,
+are not diffeomorphic.
+When this situation arises, the deformation does 
+not maintain the geometry and topology of the template. 
+
+\cite{joshi2000landmark} associated the transformation with an energy term,
+forcing the existence and uniqueness of the solution, 
+thus, enabling to create smooth differentiable maps.
+This causes the landmarks to correctly deform to the target object and preserve the topology even if they undergo
+large deformations.
+
+Although landmark matching performs well in the study of biological shape, 
+is able to compute warps from landmark displacements
+capturing information on scale, translation, rotation and shear into the statistics,
+information on bending, widening and elongation 
+are not very well captured by the approach.
+Another major drawback is on landmark positioning.
+This is usually done by hand which is time consuming. 
+
+\subsection{Boundary representations} 
+
+Boundary representation include the following approaches: active contours, active shape/appearance models and projection onto orthogonal functions.
+
+\subsubsection{Active contours} 
+
+Active contours is a method proposed by \cite{kass1988snakes}, commonly known as snakes.
+The method was conceived mainly for image segmentation procedures based on curve evolution.
+
+It starts with the definition of a contour $V$ composed by a set of points $p_i$ and an energy function defined for $V$. 
+The function has two components corresponding to the internal and external energy in the object being segmented or geometric typicality and
+an image match term as defined in Equation \ref{equ:snake}. 
+
+The geometric typicality is responsible for the smoothness of $V$ and its propagation in a desired direction.
+Smoothness is controlled by $Econtinuity$ and the direction of propagation by $Eballoon$, ensuring that
+the snake curve keeps propagating in the desired direction. 
+
+The image match term takes into consideration the intensity pattern around each vertex $p_i \in V$.
+$Eintensity$ makes $V$ move to a region of low or high image intensity information and 
+$Egradient$ attracts $V$ to the edges of the object being segmented. 
+The whole energy of the contour is defined by the integral in Equation \ref{equ:snakeEnergy}.
+
+\begin{eqnarray} 
+ E(V(s)) = \alpha Eint(V(s)) + \beta Eext (V(s)) ds\\
+ Eint (V) = \gamma Econtinuity (V) + \delta Eballoon (V)\\
+ Eext (V) = \eta Eintensity (V) + \varphi Egradient (V)
+ \label{equ:snake}
+\end{eqnarray}
+
+\begin{equation}
+ E_{snake} = \int_0^1 E(V(s)) ds\\
+ \label{equ:snakeEnergy}
+\end{equation}
+
+\begin{figure} 
+ \centering 
+ \epsfig{file = snakes.eps, width = 8cm}
+ \caption[Snake's energy.]{Image taken from \cite{kass1988snakes}. The contour moves back to the edge of the pear.}
+ \label{fig:snakes}  
+\end{figure}
+
+As shown in Figure \ref{fig:snakes}, the contour maps back to the edge of the pear after the perturbation, 
+this place is where the minima is found.
+
+Two major drawbacks of the active contour model are in the initialization step 
+since the countour must be placed accordingly to the object being segmented, 
+and the boundaries of the object need to be defined by a gradient i.e., to have a smooth boundary. 
+
+\cite{chan2001active} proposed an active contour model based on the segmentation 
+techniques by \cite{mumford1989optimal} and the level set method. 
+It is worth mentioning that the level-set method 
+models the internal information of an object, 
+as an example, take the distance transform. 
+Each pixel in the image is labeled with the distance value to the nearest boundary point, 
+having $0$ at the boundary and either positive or negative in the interior and exterior of the object. 
+Even though this information could be 
+used to locate and reference the position of internal features in the object, 
+the information is only used to 
+produce boundary segmentations 
+or in other words, to model the curve/surface propagation flow until reaching a stable position.
+
+Figure \ref{fig:chanveseS} shows the automatic segmentation of an object whose boundaries are not well defined and 
+the contour can be place anywhere in the image.
+
+\begin{figure} 
+ \centering 
+ \epsfig{file = chanVeseS.eps, width = 8cm}
+ \caption[Segmentation with orientation.]{Image taken from \cite{chan2001active}. The contour of 'S' is not well defined, the segmentation succeeds due to the grouping based on orientation identity.}
+ \label{fig:chanveseS}  
+\end{figure}
+
+In some situations the regions that are being segmented could be divided, due to high noise on the image or occlusion, 
+to solve this problem, \cite{jeanvariational} proposed a region growing approach that includes
+different type of descriptors in the minimization process.
+
+The approach defines regions in the image via a discrete function:
+
+\begin{equation}
+  \phi^{n}(x) =  \begin{cases}
+			   1, \text{for $x$ } \in \Omega_{in} \\
+			   0, \text{for $x$ } \in \Omega_{out}, 
+		 \end{cases} 
+   \label{equ:vrgRose}
+\end{equation}
+where $\Omega_{in}$ and $\Omega_{out}$ are the regions that correspond to the segmented pixels.
+The regions defined in $\Omega$, change according to the region-based energy $J(\phi^{n})$, that must
+be designed so that its minimum corresponds to the expected solution. At each iteration $n$, the voxels that are connected to $\Omega_{in}$
+are tested. If the addition of those voxels decreases the energy, then, they are accepted and the discrete function is updated as:
+
+\begin{equation}
+ \phi^{n+1}(x) = \frac{1}{2}(1-sign\left(\Delta J(\phi^{n+1})\right).
+\end{equation}
+
+This approach has been tested in segmentation of the vascular tree in the lung as shown by \cite{PRIE-12c}.
+The descriptors used on the images are based on a vesselness criterion proposed by \cite{springerlink:10.1007/BFb0029240} and on the gray levels of the original image.
+The objective is to detect tubular structures in the image.
+
+The complete formulation using the vesselness descriptors goes as follow:
+\begin{equation}
+  \Delta{J(\phi^{n+1})} = 1 - 2\phi^{n}\left(\Delta{J_{1}}(f, v)\right),
+\end{equation}
+\begin{equation}
+  \Delta{J_{1}}(f, v) = \begin{array}{l}
+                         \frac{v}{MaxV} \left( |v - \mu_{v_{in}}|^2 - |v - \mu_{v_{out}}|^2 \right)   \\
+			+  \left|\frac{f}{MaxF}\right| \left(|f - \mu_{f_{in}}|^2 - |f - \mu_{f_{out}}|^2 \right),
+                        \end{array}
+\end{equation}
+where $MaxV$ is the maximum value of the vesselness criterion, $\mu_{v_{in}}$ and $\mu_{v_{out}}$ 
+are the mean values of the vesselness image voxels in $\Omega_{in}$ and $\Omega_{out}$ respectively. 
+$MaxF$ is the maximum value in the original image and similarly $\mu_{f_{in}}$ and $\mu_{f_{out}}$ are the respective mean values in the image 
+for the regions $\Omega_{in}$ and $\Omega_{out}$.
+
+After the segmentation is done by any of the curve evolution methods stated above, 
+the user is left with a set of points that correspond to the boundary of the object. 
+Once again, notice that the approaches lack the mechanisms to describe internal features of the objects.
+
+The following section introduces to segmentation using geometric and intensity models, know as active shape and appearance models. 
+
+\subsubsection{Active shape and appearance models} 
+
+ASM (Active shape models) was proposed by \cite{cootes1995active}. 
+The approach is based on the formulation that complex images can be analyzed by using 
+shape priors. 
+It differs from previous approaches that search to segment structures based 
+on edges or homogeneous regions by introducing a deformable model template of the
+objects that exist in the image. 
+
+A deformable template is defined as proposed by \cite{fisker2000making}:
+
+\begin{definition}
+  A \textbf{deformable template} model can be characterized as a model, which under an implicit or explicit optimization
+  criterion, deforms a shape to match a known type of object in an image. 
+\end{definition}
+
+The segmentation procedure uses the deformable template 
+and tries to minimize an energy function that matches the template 
+on the image.
+In general terms, the approach could be described as observe, learn and match.
+
+The observation stage consists in generating the set of 
+training cases. To do this, each object or structure of interest is
+represented by a set of points or landmarks. These points can represent
+the boundary and internal or external features. 
+For each case, the points are required to be 
+placed in the same manner. This task 
+is usually performed by hand and validated by an expert. 
+Although automatic methods have been proposed to speed up the process \cite{hill2000framework}, \cite{heimann2007shape},
+the outputs are often revised and corrected. 
+
+Once the landmarks are placed on each training case, they are aligned to a common set of axes.
+Recall that if the cases are not aligned, the statistics are meaningless.
+
+After the alignment, the learning stage is done using PCA (principal component analysis) see Appendix \ref{sec:apendixPCA} for details.
+PCA detects salient features or principal directions of variation,
+removes redundant information and produces a compact representation of the data.
+
+Once the principal direction of variation is detected in the population, 
+any of the training sets in the data can be approximated using:
+\begin{equation}
+ x_i \approx Pb + \bar{x}
+ \label{equ:approxData}
+\end{equation}
+where $P = (p_1 |p_2 | . . . |p_n )$ contains $n$ eigenvectors (produced by PCA)
+and $b$ is a $n$ dimensional vector that defines a set of 
+parameters of a deformable model. 
+
+The variance of the $i_{th}$ parameter of $b_i$ across the training set is given by $\lambda_i$. By applying limits
+$\pm 3 \sqrt{\lambda_i}$ the resulting model is guaranteed to be in the population. 
+
+The final stage is to match a new input to the training cases.
+This could be done in an iterative process. 
+Using the alignment explained in section \ref{sec:surfaceRep},
+the matching of a new object $x_i$ goes as follows: 
+
+\begin{enumerate}
+ \item Initialize $b$ to zero.
+ \item Generate a model $y$ using Equation \ref{equ:approxData}.
+ \item Align $y$ to $x_i$ using the transformation $\Gamma$ given by Equation \ref{equ:align1}.
+ \item Project $x_i$ into model coordinates using $\Gamma^{-1}$, $x_i' = \Gamma^{-1}(x_i)$.
+ \item Project $x_i'$ into the tangent plane to $\bar{x}$ by scaling: $x_i'' = x_i'/(x_i' \cdot \bar{x})$
+ \item Update $b = P^T (x_i'' - \bar{x})$
+ \item Repeat from 2 until conversion.
+\end{enumerate}
+
+This general approach to match shape has proven to be very effective in image segmentation. 
+It has been applied in applications such as object tracking, detection and recognition.
+
+The AAM (Active Appearance Model) proposed by \cite{cootes2001active} improves the ASM by learning image appearance
+% statistics as well. This is done by doing the analysis on the 
+normalized appearance vectors instead of the location 
+of the landmarks i.e., each appearance vector is built from the image intensities (grey level or multiple components as RGB),
+and a similar framework of ASM is applied. 
+
+A third PCA is applied to search for correlation between the shape and appearance analysis. 
+This final PCA is the one used to produce the approximations of a new model.
+
+A speed-up of the method was also proposed by \cite{mitchell20023} where the search for the closest model is done in a multi-scale 
+fashion. 
+
+In general terms ASM and AAM are robust and efficient methods in image segmentation, 
+we will see in section \ref{sec:medialRepresentations} that 
+other methods similar to PCA are best suited to produce statistical information for 3D shape analysis.
+
+\subsubsection{Function based models} 
+
+Function based modeling offers great flexibility and precision. 
+The key concept is to use a set of smooth functions to approximately model the surface of an object.
+One of the strengths of using such functions is that the derivatives of the object's surface are available and 
+boundary normals and curvatures can be derived analytically. 
+In contrast to PDM (point distribution models such as landmark based or ASM), these methods efficiently represent
+a shape model by using fewer parameters.
+
+Different type of functions can be used to reconstruct a surface, including 
+orthogonal functions and spline based methods such as NURBS (Non-Uniform Rational Basis Splines).
+
+There are many type of orthogonal functions: spherical wavelets \cite{schroder1995spherical}, 
+SPHARM (spherical harmonics \cite{brechbuhler1995parametrization}, 
+Hermite polynomials \cite{bradley1997geometric}, among others.
+
+Spherical Wavelets describe surfaces that have spherical topology.
+A wavelets is a function that localizes a given function in space and scale.
+In other words they can represent a given function at multiple levels of detail. 
+They are superior to a conventional Fourier transform
+because they capture 
+low and high frequency components of the signal at
+specific locations in time or space.
+Equation \ref{eqn:wavelet} shows the general formula of a wavelet.
+
+\begin{eqnarray}
+ \Psi_{a, b}(t) = \frac{1}{\sqrt{a}}\Psi(\frac{t - b}{a}) \\
+ x_a(t) = \iint x(t) \Psi_{a, b}(t)dt
+ \label{eqn:wavelet}
+\end{eqnarray}
+
+To create a spherical wavelet, the shape of the object is mapped onto the sphere
+and a signal is sampled from it \cite{schroder1995spherical}.
+The signal is decomposed in various steps of subsampling and differentiating.
+At the end, the procedure retains a broader representation of the sphere. 
+To recover the infromation lost during the sumbsampling of the signal, a Haar-like operator
+is used such that it retains the differences between the two stages \cite{schwartz2008tr}.
+The wavelet signal can be used for (lossy) signal compression and can be further analyzed
+by PCA. The analysis by PCA yields a mean shape that contains global information 
+about the population. 
+One of the major drawback of the approach lays on the fact that they are only able to represent 
+objects of spherical topology. A second issue is found for objects that need to be mapped 
+on a sphere, because the transformation can introduce undesired distortion. 
+
+
+SPHARM functions only represent objects with spherical topology. 
+This approach starts by unfolding and mapping the object onto a sphere, where each 
+point can be expressed by two parameters in spherical coordinates $(\theta, \phi)$. 
+An optimization is performed over the projected points that aims to preserve the area of original
+surface elements and minimize their distortion. 
+Once the spherical parameterization is obtained, 
+the surface $\vec{v}(\theta, \phi) = (x(\theta, \phi), y(\theta, \phi), z(\theta, \phi))^T$
+can be expressed as:
+\begin{equation}
+ \vec{v}(\theta, \phi) = \sum_{l=0}^\infty \sum_{m=-l}^l \vec{c}_l^m Y_l^m(\theta, \phi)
+ \label{equ:sphericalHarmonics}
+\end{equation}
+where an optimization procedure by least-squares is done
+to find the best coefficients $\vec{c}_l^m$ for the spherical harmonic basis functions $Y_l^m(\theta, \phi)$, 
+for a review on spherical harmonic functions see \cite{mohlenkamp2010user}.
+Image \ref{fig:spharm} shows a lateral ventricle surface using different harmonics.
+
+\begin{figure} 
+ \centering 
+ \epsfig{file = spharm.eps, width = 6cm}
+ \caption[SPHARM description.]{Image taken from \cite{styner2004boundary}. The SPHARM shape description of a human lateral ventricle 
+	  shown at 4 different degrees ( 1, 3, 6, 10 harmonics).
+}
+ \label{fig:spharm}  
+\end{figure}
+
+Other type of functions can be used to model an object's surface. I am interested in 
+the Hermite based functions and spline based methods. They will not be detailed in this section
+as they will be reviewed on Section \ref{sec:s-repImplementation}.
+

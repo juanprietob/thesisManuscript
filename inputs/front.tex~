@@ -1,0 +1,90 @@
+% *************** Front matter ***************
+% *************** Title page ***************
+\pagestyle{empty}
+\thispagestyle{empty} \noindent 
+
+
+%%%% debut macro %%%%
+\newenvironment{changemargin}[2]{\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{0pt}%
+\setlength{\rightmargin}{0pt}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{0pt plus 1pt}%
+\addtolength{\leftmargin}{#1}%
+\addtolength{\rightmargin}{#2}%
+}\item }{\end{list}}
+%%%% fin macro %%%%
+
+\begin{changemargin}{-1.7cm}{0 cm}
+
+%\newcolumntype{M}[1]{>{\raggedright}m{#1}}
+\begin{tabular}{l m{5cm} c m{5cm} r m{5cm}}
+\includegraphics[height= 2cm]{UdL.eps} &  & \includegraphics[height= 2cm]{INSA.eps} \\
+  &   &  \\
+  &   &  \\
+\small Num\'ero d'ordre : xxx-xxxx &   & \small Ann\'ee 2014
+\end{tabular}
+
+\vspace{0.6cm}
+
+\begin{center}
+{\Large TH\`ESE}
+
+\vspace{0.15cm}
+
+{D\'{e}livr\'{e}e par}
+
+\vspace{0.15cm}
+
+{\Large L'Insitut National des Sciences Appliqu\'ees de Lyon}
+
+\vspace{0.5cm}
+
+{\Large DIPL\^{O}ME DE DOCTORAT}
+
+\vspace{0.15cm}
+
+{(arr\^{e}t\'{e} du 7 aout 2006)}
+
+\vspace{0.5cm}
+
+{\Large \'ECOLE DOCTORALE : \'{E}lectronique, \'{E}lectrotechnique,
+Automatique
+Sp\'{e}cialit\'e: STIC Sant\'{e}
+}
+
+\vspace{0.5cm}
+
+{Soutenue publiquement le 31 Janvier 2014 par}
+
+\vspace{0.25cm}
+
+{\Large \authorname}
+
+\vspace{0.25cm}
+
+\Huge \bf Multiparametric organ modeling for shape statistics and simulation procedures.
+
+\vspace{0.3cm}
+\end{center}
+
+
+\begin{center}
+{\Large Jury} \\
+\vspace{0.5cm}
+\begin{tabular}{lll}
+    {\bf Christophe ODET} & Professeur, INSA - Lyon & Directeur de th\`{e}se \\
+    {\bf Chantal MULLER} & Maitre de Conf\'{e}rences, INSA - Lyon & Co-directeur de th\`{e}se \\
+    {\bf Martin STYNER}   & Maitre de Conf\'{e}rences, NIRAL - UNC & Rapporteur \\
+    {\bf Christian GERMAIN} & Professeur,  IMS - Universit\'{e} Bordeaux & Rapporteur \\
+    {\bf David ROUSSEAU}   & Professeur,  INSA - Lyon & Examinateur \\
+    {\bf Fran\c{c}ois COTTON} & Professeur, Centre Hospitalier Lyon-Sud & Examinateur \\
+    {\bf Charles GUTTMANN}   & Maitre de Conf\'{e}rences, BWH - Boston Massachusetts & Examinateur \\
+    {\bf Stephen PIZER}   & Professeur, MIDAG - UNC & Examinateur \\
+\end{tabular}
+\end{center}
+
+\end{changemargin}
+

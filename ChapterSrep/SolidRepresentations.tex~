@@ -1,0 +1,830 @@
+\subsection{Atlas based deformable models}
+\label{sec:atlasDeform}
+
+Atlas based deformable models are included in solid representation 
+because the geometry of the template (atlas) is well known, 
+including its surface and internal features. 
+
+The atlas deformation is based on image registration techniques.
+To define image registration, I take the following definition given by \cite{brown1992survey}:
+
+\begin{definition}
+ \textbf{Image registration} can be defined as a mapping between two images both
+ spatially and with respect to intensity.
+\end{definition}
+
+This matching produces deformation maps where every position $p_i$
+in the atlas $I_a$ is known on the target $I_t$, therefore 
+a registration can be expressed as:
+
+\begin{equation}
+ I_a(p_i) = g(I_t(f(p_i)))
+\end{equation}
+where $f(p_i)$ is a spatial coordinate transformation
+and $g$ is an intensity transformation.
+
+Using the deformation maps, the position of every voxel 
+(including internal features) from the atlas can be found on 
+the target object. 
+
+To produce the registration, the transformation uses different image descriptors and spatial information. 
+The mapping finds an optimal solution, where the optimum depends on the type of descriptors.
+For an updated review on image registration techniques see \cite{wyawahare2009image}.
+
+The outputs produced by registration techniques are smooth diffeomorphic maps, 
+this means that local structure is also preserved during the deformation \cite{narayanan2005diffeomorphic}. 
+For this reason, they've been used to develop transformation-based
+probabilistic atlas as shown by \cite{cao2005large} where it describes the variation of ventricular geometry 
+and fiber organization (internal features).
+
+Popular software suits for unsupervised segmentation and labeling of structures in the brain
+can be found in Freesurfer \cite{fischl2002whole}, \cite{fischl2004automatically} and 
+BrainVisa \cite{pohl07_3}. Both are atlas based registration techniques. 
+
+Even though, image registration is known to have to much uncertainty,
+it is an approach broadly use for medical image analysis. 
+It is difficult to evaluate how well the procedure performs and this is  
+a critical point for medical diagnostics, where accuracy is needed. 
+Uncertainty arises because the registration produces a single deterministic answer.
+Some authors propose some solutions to solve this issue by doing posterior statistical analysis 
+based on the intensity information \cite{kybic2010bootstrap}, \cite{simonson2011image}.
+
+Measuring uncertainty is helpful to determine whether the results 
+can be trusted or not. This measure could possibly be exploited
+in unsupervised segmentations or a multi-atlas registration scenario, by giving weights to each atlas based 
+on their performance. This should notably improve the results on this category. 
+
+The following section is for medial representations, the type of modeling that will be used throughout
+this dissertation. 
+
+\subsection{Medial representations}
+\label{sec:medialRepresentations}
+
+\begin{chapquote}{Harry Blum}
+  For even so simple a notion as location of an object, the contour or perimeter description is particularly poor.
+\end{chapquote}
+
+The concept of medial representation started with \cite{blum1967transformation}.
+Blum noticed that for any shape, it was possible to calculate a medial axis and 
+by doing it, the objects can be described from the inside, in contrast to the techniques 
+in Section \ref{sec:surfaceRep}, that seek to model the outside of the object only.
+
+To explain this concept Blum used a grassfire analogy, where the formation of the medial axis is done by setting fire to 
+the outer layer of the object i.e., its boundary. The fire propagates uniformly towards the interior of the object and 
+when the fronts meet we find the medial axis, a notion related to level-set. 
+Following this concept the definition of a medial axis is:
+
+\begin{definition}
+ The \textbf{medial axis} is the collection of interior points with at least two closest points on the boundary.
+ \label{def:medialAxis}
+\end{definition}
+
+In conjunction with the MA (MA will be use to denote medial axis or medial locus similarly) a MAT (medial axis transform) is generated: 
+
+\begin{definition}
+ The \textbf{medial axis transform} contains the distance from each point of the medial axis to the boundary of the object. 
+\end{definition}
+
+In the context of the grassfire analogy, the MAT is equivalent to the burning time from the boundary 
+until two fronts meet at the MA.
+The MAT has been criticized as small boundary perturbations produce significant changes
+on the MA, which yields it impractical for shape description, Figure \ref{fig:unstable} shows 
+an example of unstable MA.
+This instability has been the focus of many research groups that seek 
+to produce a better computation of the MA. 
+The idea is to identify the most meaningful 
+subsets that compose the MA by trading exactness for stability.
+
+Typically, a pruning of the MA is performed by a threshold value and a criteria that determines
+``substance'' and ``connection'', substance being the tangible part of the object and connection, 
+how the parts are connected. 
+To have a better understanding of this concept think of a complex object such as a hand. 
+A hand is compose by a palm (a blob) and fingers (protrusions) or 
+think of it as a collection of more complex objects. The substance is
+connected in a such a way that we perceive a hand.
+
+\begin{figure} 
+ \centering 
+ \epsfig{file = medialUnstability.eps, width = 8cm}
+ \caption[MAT instabilities.]{Image taken from \cite{katz2003untangling}. MAT instabilities: A tiny change in the boundary produces a large change in the MAT.}
+ \label{fig:unstable}  
+\end{figure}
+
+Different authors provide the means of computing stable MA, see the methods by
+\cite{culver1999accurate}, \cite{amenta2001power}, \cite{katz2003untangling}, \cite{miklos2010discrete}. 
+
+A stable MA is a powerful shape descriptor, that
+produces compact shape representations of the surface of an object and provides better notions of concepts such as ``center point'' and 
+positions inside and relative to the object.
+As mentioned in section \ref{sec:surfaceRep} the centroid is used
+to align objects on a common frame. In some cases the centroid 
+of an object is outside the object itself, thus, making it unsuitable for alignment procedures.
+By computing the center point on the MA, it is guaranteed that it will 
+be inside the object and its position will be stable under different transformations of the object \cite{liu2011extended}.
+
+The notions such as a position inside the object or relative to other objects, are not addressed 
+by any of the techniques discussed in Section \ref{sec:surfaceRep}.
+These are trivial when an object is described by its MA. 
+Positions inside the object will be discussed later in Section \ref{sec:internalCoordinates}.
+
+In 2D the MA is created by computing maximally inscribed discs, with at least two 
+points on the boundary, the union of disk's centers form the MA.
+In 3D the MA is composed by sheets, generated with maximally inscribed spheres.
+In general terms, the MA extends in higher dimensions, where it is composed by hyper surfaces
+generated with maximally inscribed hyper spheres.
+
+\begin{figure} 
+ \centering 
+ \subfigure[Growing]{\epsfig{file = StableMedialAxis0.eps, width = 4.5cm}}
+ \subfigure[Shrinking]{\epsfig{file = StableMedialAxis1.eps, width = 4.5cm}}
+ \subfigure[Pruned]{\epsfig{file = StableMedialAxis2.eps, width = 4.5cm}}
+ \caption[MA Pruning.]{Image taken from \cite{miklos2010discrete}. Pruning the medial axis to detect important features.}
+ \label{fig:stableAxis}  
+\end{figure}
+
+To get an insight of one technique to compute a stable MA, lets take the example in 
+figure \ref{fig:stableAxis}. Figure \ref{fig:stableAxis}.a shows 
+the MA in white and a medial inscribed disk in purple,
+Figure \ref{fig:stableAxis}.b shows the same disc scaled by $\delta$. 
+After scaling the disc, it gets covered by a larger one, 
+this means that there is significantly larger substance nearby and that it is a branch.
+
+Using this criteria, the branches can be pruned using a
+scaling factor $\delta$.
+Figure \ref{fig:stableAxis}.c shows the simplified MA after
+the shrinking of the discs by the same $\delta$. 
+This procedure detects the most important branches on the MA and
+by pruning them, it significantly reduces the amount of data to represent the same figure with out loosing 
+much precision. 
+
+One important aspect left unanswered is if this type of representation 
+is adequate to perform statistical analysis on a population of objects. 
+One major difficulty will be to produce the correspondence of the branching structures.
+Statistics on branching objects is a subject of ongoing research by \cite{wang2007object}, \cite{sorensen2011dissimilarity}, 
+\cite{aydin2011visualizing}, 
+which is still not applicable to medial geometry. 
+To use medial representations for statistical analysis on shape, 
+the construction of the MA must be done in a different manner, 
+the MA should have a stable structure for the population of objects we wish to represent. 
+
+If we take into consideration how the MA is built, we see that the procedure is a top-down approach, 
+it starts on the boundary of the object and by using a certain criteria it gets to the MA. 
+An other alternative is to do it the opposite way (down-top). 
+We can find a down-top approach to build a MA in \cite{styner2001medial}.
+
+In summary, Styner's method goes by computing an average MA
+from a population of objects and then sampling the average using a regular grid of
+points. The sampled grid of points is used as the new MA.
+To compute the average MA, a PDM of
+the branching structures is created 
+by finely sampling their SPHARM representations.
+The PDM allows PCA to compute the average and 
+finally the grid of points or m-rep (definition given shortly) is sampled by 
+minimizing a distance function over the points.
+A series of tests are performed afterwards to assess
+the quality of the MA by 
+generating different instances of the population using 
+the PCA coefficients. For each instance, the m-rep is refitted
+and an error measurement is estimated to evaluate 
+how well it represents the whole population. 
+
+\begin{figure} 
+ \centering  
+ \epsfig{file = medialGeometry.eps, width = 8cm}
+ \caption[Medial atom definition.]{Image taken from \cite{fletcher2004principal}. Medial atom definition (left) and a set of atoms representing a hippocampus (right).
+          The atoms are arranged in a grid size $8*3$ and are able to produce the boundary of the hippocampus.}
+ \label{fig:3DmedialGeometry}  
+\end{figure}
+
+M-reps are continuous objects that define the MA of an object as 
+a set of connected manifolds \cite{pizer1999segmentation},  \cite{yushkevich2003continuous}, \cite{pizer2003deformable}.
+Figure \ref{fig:3DmedialGeometry} shows the components of the medial geometry. 
+The MS (medial sheet, equivalent to MA in 2D)
+is parameterized by $MS(u, v)$ where $u$ and $v$ can take any value between 
+$[0, 1] \in R$. 
+The MS is a $C^2$ continuous set of medial atoms with a corresponding
+implied boundary $y_{0}$ for top surface and $y_{1}$ for bottom surface. 
+
+\begin{equation}
+ MS(u, v) = \{x, r, n_0, n_1\}
+ \label{equ:medialSheetAtom}
+\end{equation}
+Equation \ref{equ:medialSheetAtom} defines an atom for 
+every $(u, v)$ on the MS, 
+where $x$ is the position on the MS, $n_0$ and $n_1$
+are the unit spoke directions, and $r$ is the 
+length of both vectors. 
+
+A different type of atom is found at the edges of the figure, named crest atoms.
+Figure \ref{fig:crestAtom} shows how the top and bottom surfaces join 
+at the crest to produce the closed boundary of the object. 
+
+\begin{figure} 
+ \centering  
+ \epsfig{file = crestAtom.eps, width = 8cm}
+ \caption[Top, bottom and crest surfaces.]{Image taken from \cite{pizer2003deformable}. Top and bottom surfaces of the m-rep join at the crest.}
+ \label{fig:crestAtom}  
+\end{figure}
+
+To describe an m-rep in the computer, 
+a discrete set of atoms is used.
+From now on, the word m-rep relates to the discrete version of the object. 
+M-reps use the interpolation mechanisms described in \cite{thall2004deformable}, 
+which enables to reconstruct the object's surface.
+The interpolation matches the surface 
+to the normals described by the vectors $n_0$ and $n_1$.
+Matching the normals produces a $C^2$ continuous surface everywhere. 
+From this surface Thall’s method allows the calculation of the interpolated medial atoms.
+
+In summary, m-reps are efficient structures 
+that describe in a multi-scale fashion the geometry
+of an object, they can be used 
+for medical image segmentation \cite{pizer2005method} and perform 
+statistical analysis on shape variability \cite{fletcher2004principal}. 
+
+The method used by m-reps to produce statistics is called PGA (principal geodesic analysis)
+a generalization of PCA to manifold data, which will be described briefly in the 
+following section.
+
+\subsubsection{Principal geodesic analysis}
+
+We have seen that m-reps can represent a population of 3D figures
+by defining a stable MS and deforming it to best fit 
+the various instances of the objects.
+One of the many strengths of m-reps is to describe 
+shape changes in terms of thickness, bending and widening 
+among the already known variations (translation, rotation and scale).
+In order to describe these variations 
+standard techniques to compute statistics such as PCA do not apply, 
+since m-reps are composed by elements of a non-Euclidean space.
+In fact they belong to a Riemannian symmetric space.
+
+If we recall the definition of a medial atom \ref{equ:medialSheetAtom},
+we see that it is composed by $x \in R^3$, the center of the
+inscribed sphere; $r \in R^+$, the local width defined as the
+common spoke length; $n_0, n_1 \in S^2$, the two unit spoke
+directions (here $S^2$ is the unit sphere in $R^3$).
+The medial atom is then a point on the manifold
+$M(1) = R^3 \times R^+ \times S^2 \times S^2$. 
+Since an m-rep consists of $n$ medial atoms, 
+a single figure may be considered as a point
+on the manifold $M(n) = \Pi_{i=1}^n M(1)$ i.e., the direct product
+of n copies of $M(1)$.
+
+PGA (principal geodesic analysis) was developed as a generalization of PCA
+for manifold data. 
+Similarly, the idea is to project the data onto lower-dimensional 
+subspaces that best represent the variability of the data. 
+Concepts from PCA such as mean, variance, subspace and projection 
+had to be revisited in order to work properly with manifold data.
+Details of PGA can be found in \cite{fletcher2004principal}.
+
+PGA works well for data living on manifolds with spherical components, 
+especially when the variations are best described using great circles.
+However, m-rep data frequently lives on small circles 
+and the mean computed with PGA is not optimal.
+A more suitable statistical framework can be developed taking this into consideration. 
+
+The following section describes quasi-medial representations or s-reps and
+the statistical framework to compute shape variations called CPNS (composite 
+principal nested spheres).
+
+
+\subsection{Quasi medial representations}
+\label{sec:quasiMedial}
+
+Quasi medial representations or s-reps \cite{pizer_nested_2012} differ from m-reps on the strict medialness
+constraint on every atom, i.e., the position of an atom is not necessarily the center 
+of a maximally inscribed sphere. 
+In s-reps, the atoms are rewarded for being ``as medial as possible'' but small 
+deviations are tolerated, this means that the spokes can have different lengths,
+this is done for the sake of improving the fit of the s-rep to a given object.
+
+S-reps are continuous objects, defined as a locus of spoke vectors $(p, S)$ 
+with tail at $p$ and tip at $p + S$, also parameterized by $(u, v)$ such that 
+the medial sheet is defined as $MS = \{p(u, v) : \forall (u, v) \in [0, 1] \}$, the
+spokes $SP = \{S(u, v) : \forall (u, v) \in [0, 1] \}$ and 
+the boundary of the object is $BO = \{p(u, v) + S(u, v) : \forall (u, v) \in [0, 1] \}$.
+The union of tails form the skeletal locus as a fully folded 
+multi-sided sheet, i.e. the top side of the sheet is parameterized by $v \in [0, 0.5]$
+and the bottom side by $v \in [0.5, 1]$.
+Given this definition, every point inside the object can be reached by exactly one spoke.
+
+The lengths of the spokes are defined as $r(u, v) = |S(u, v)|$ and 
+the directions of the spokes as $U(u, v) = S(u, v)/r(u, v)$. 
+Figure \ref{fig:srepFigure} shows a slab figure parameterized
+by $(u, v, \tau)$ and a tube figure parameterized by $(u, \phi, \tau)$,
+$\tau \in [0, 1]$ is the portion of the spoke length from the MS to the boundary of the object.
+Section \ref{sec:internalCoordinates} extends the concept of interior filling objects and
+the generation of $X2U$ and $U2X$ maps. 
+
+\begin{figure} 
+ \centering  
+ \subfigure[Slab]{\epsfig{file = s-repSlab.eps, width = 16cm}}
+ \subfigure[Quasi-tube]{\epsfig{file = s-repTube.eps, width = 16cm}}
+ \caption[Slab type s-rep.]{Image taken from \cite{pizer_nested_2012}. S-rep slab, interior filling object. Parameterized by $(u, v, \tau) \in [0, 1]$
+          every point inside the object can be reached by only one spoke. 
+          Similarly a tube figure is parameterized by $(u, \phi, \tau)$, $\phi$ is the rotation around the space curve that defines the MA.}
+ \label{fig:srepFigure}  
+\end{figure}
+
+In a similar manner to m-reps, in the computer, s-reps are represented with a discrete set of atoms. 
+From now on, s-rep is the discrete version of the object. 
+S-reps use the interpolation mechanisms described in \cite{damon2003smoothness},
+\cite{han2006interpolation}, \cite{damon2008swept} to produce a smooth skeletal locus and a smooth vector field of spokes that generates the 
+boundary of the object.
+For slab figures, represented as a $m \times n$ grid of atoms, 
+the interpolation defines operators called $S_{rad}(u, v)$ and $S_E(u, v)$, 
+applicable to non-fold medial points (top and bottom side of the sheet without the edges) and to the edge of the figure respectively.
+The operators are defined as $2 \times 2$ matrices that can be computed for each spoke. They describe how the vector
+$U(u, v)$ moves along and across the field of spokes. To interpolate a spoke at position $(u + \Delta u, v + \Delta v)$ 
+the method uses the eigen-decomposition of the matrices. Damon shows that the object remains legal i.e., the spokes
+do not cross each other,
+if and only if for all $(u, v)$ the eigenvalues of $S_{rad}(u, v) < 1/r(u,v)$. 
+
+The field of spokes can be retrieved by taking a small $\Delta$ step in the $(u, v)$ direction and interpolating  
+the eigenvalues found from the eigen-decomposition of the matrix. 
+The interpolation is done using the neighboring discrete spokes in the quad 
+(a quad is defined as $Q_{i,j} = \{S(i/n, j/m), S((i+1)/n, j/m), S((i+1)/n, (j+1)/n), S(i/n, (j+1)/m) : i \in [1, n], j \in [1, m] \}]$)).
+At each $(u + \Delta u, v + \Delta v)$ new eigenvalues 
+are calculated that can be turned back into an $S_{rad}$ operator. Integrating $S_{rad}$
+from $(u, v)$ at the corner to $(u + \Delta u, v + \Delta v)$ following a straight line, 
+the full swing of the spoke can be computed. 
+
+Besides object modeling using the interpolation mechanisms describe above, 
+the goal is to produce s-reps suitable for probabilistic analysis. 
+Similarly to m-reps, the MS on an s-rep figure must remain 
+stable through the population of objects.
+Unlike m-reps, s-reps go through a fitting process to produce the best possible
+representation for each subject in the population. 
+The procedure has mainly 3 stages to produce the fit. 
+First, the s-rep is aligned to the image;
+second, each atom is moved around separately to improve the fit; 
+third, the spoke lengths are modified to further match the object's
+boundary.
+Further details are given in the following section.
+
+\subsubsection{S-rep fitting}
+
+The fitting process is done to produce the best 
+geometric approximation of an object using 
+a base s-rep, thus, stabilizing 
+the MS through the population and giving the possibility to 
+compute better statistics afterwards.
+For the case of s-reps, instead of GPA, CPNS (Composite Principal Nested Spheres) is used.
+
+The s-rep fitting is done on already segmented data, usually provided 
+in the form of a binary image. The image is converted into 
+a signed distance transform \cite{saboo2011aa}, with negative values 
+in the interior, 0 at the boundary and positive outside of the object. 
+After the conversion, 
+the fitting starts by aligning the s-rep to the data
+via matching of moments of boundary positions (zero level on the distance transform) or using 
+landmarks provided by the user.
+
+In the second stage or atom stage, each atom in the s-rep is optimized
+by measuring how well each of the spokes fits into the distance image $D(x)$ while maintaining 
+the regularity of the grid. In this stage, the only variable affected is the position and orientation of the atom. 
+
+In the third stage or spoke stage, each spoke is optimized to produce the best match to the boundary of the object
+while fixing the tail and changing the angle and length of the spokes.
+
+The following penalties are used to produce the fit:
+\begin{enumerate}
+ \item Regularity of the quads. 
+ \item Deviation from medialness using the spokes located at opposite sides of the MS $|r(u, v) - r(u, 1 - v)|$. 
+ \item Deviation from boundary normals $cos^{-1}(\hat{\nabla D(x)} \cdot U(u, v))$ where $x = p(u,v) + S(u, v)$.
+ \item Deviation from MS normals. The MS normal is calculated as $U(u,v) - U(u,1 - v)$.
+ \item Deviation from the angle between $w_2$ and $U(u, v) \times U(u, 1 - v)$, where $w_2$ is orthogonal to the principal curvature direction.
+ \item Illegality of spoke crossings, i.e.,  $S_{rad}(u, v) > 1/r(u,v)$ 
+\end{enumerate}
+
+Once the optimization described above is done for every object in the population, 
+correspondence among the cases must be achieved prior to compute 
+statistics using CPNS, this can be done by using the MS that is composed by 
+a set of points $\{p_i\}$ as a PDM. The PDM can be centered at the origin and 
+then scaled by making the 
+sum of the squared distances of the points to the origin equal to 1.
+The scaling factor of the PDM will be named $\lambda$.
+After the alignment, in order to produce shape statistics, lets analyze the 
+abstract space where an s-rep lives.
+
+\subsubsection{S-rep abstract space and composite analysis}
+
+An s-rep lives in $R^{n+1} \times S^{3n - 4} \times (S^2)^n$.
+To explain this abstract space, lets
+define one s-rep composed by $n$ spokes $s_{rep} = \{(p_i, r_i, U_i) | i = 1,2, ...,n\}$.
+This corresponds to the Cartesian product of $n + 2$ manifolds, 
+one which is Euclidean and the rest are spheres.
+The Euclidean manifold $R^{n+1}$ corresponds to $n$ log $r_i$ values plus 
+the scaling factor of the PDM (log $\lambda$).
+The spherical manifolds are the $S^{3n - 4}$ corresponding to the PDM
+and the $(S^2)^n$ are for the $n$ spokes.
+
+In order to study a population of s-reps and knowing that 
+they are composed by elements on different manifolds, 
+each one of them must be analyzed separately at first.
+
+PNS (principal nested spheres) \cite{jung_analysis_2012} allows 
+estimating the principal modes for each non-Euclidean component
+and produces Euclidean scores (see Appendix \ref{sec:apendixCPNS}).
+All of the scores are composed on a matrix 
+that contains Euclidean data only, thus, 
+making possible to do further analysis using PCA. 
+The composite matrix $Z_{comp}$ is shown in Equation \ref{equ:compositeMatrix}, where $N$ is the number
+of s-reps and * means that the mean has been subtracted from the variable. 
+
+\begin{equation}
+\begin{array}{ccc}
+         \begin{array}{c}         
+          \text{Sphere 0:} \\
+          \text{Scaled medial points} \\
+           \\
+           \\
+          \text{Spheres 1 - n:}\\          
+          \text{Spoke directions} \\
+          \\
+          \text{Euclidean variables:}\\
+          \text{Scaling}\\
+          \\
+          \\
+          \text{Spoke lengths} \\          
+          \\
+         \end{array} 
+ &
+    \left [ \begin{array}{ccc}
+          z^t_{1,1} & \hdots & z^t_{1,N} \\
+          \vdots    & \ddots & \vdots    \\
+          z^t_{N-1,1} & \hdots & z^t_{N-1,N}\\
+          \\
+          z^{S_1}_{1,1} & \hdots & z^{S_1}_{1,N}\\          
+          \vdots    & \ddots & \vdots    \\
+          z^{S_n}_{n,1} & \hdots & z^{S_n}_{n,N}\\          
+          \\
+          \text{log}^*_{\lambda_1} & \hdots & \text{log}^*_{\lambda_N} \\
+          \\
+          \text{log}^*_{r_{1,1}} & \hdots & \text{log}^*_{r_{n,N}} \\
+          \vdots    & \ddots & \vdots    \\
+          \text{log}^*_{r_{n,1}} & \hdots & \text{log}^*_{r_{n,N}} \\
+         \end{array} \right ]
+ &
+    \left [ \begin{array}{c}
+          \bar \lambda \\          
+          \vdots \\
+          \bar \lambda \\
+          \\
+          \bar r_1 \\          
+          \vdots \\          
+          \bar r_n \\
+          \\
+          \bar \lambda \\
+          \\
+          \bar r_1 \\
+          \vdots \\
+          \bar r_n \\
+         \end{array} \right ]
+\\
+& \longleftarrow \text{Cases} \longrightarrow & \text{Scaling}
+\end{array}
+\label{equ:compositeMatrix}
+\end{equation}
+
+CPNS produces a set of eigen-modes that can be used to approximate 
+any of the shapes in the population (see Appendix \ref{sec:apendixPCA}).
+This results in a vector that lives in Euclidean space equivalent to the $Z_{comp}$ matrix.
+Using this vector, each of the Euclidean components are ready to be mapped back to 
+their corresponding spheres by adding the mean value computed at the PNS analysis. 
+
+We have seen that it is possible to compute robust statistics for 3D shape objects using 
+medial representations. The following section explains the implementation based 
+on the concepts seen for medial representations. 
+
+\section{Object modeling using s-reps }
+\label{sec:s-repImplementation}
+
+The s-rep implementation done for this dissertation defines
+the interpolation mechanisms similar to \cite{han2006interpolation}.
+
+\subsection{MS interpolation}
+
+The interpolation is done with cubic Hermite based splines.
+To produce the interpolation, the discrete derivatives for every atom on the MS, 
+and the normal is defined.
+
+Let $s_{rep} = \{(p_i, S_i) : i \in N\}$ and $N = m \times n$, representing 
+a discrete grid of atoms.
+The interpolation is done using the four control points from each quad in the grid.
+%A quad is define similarly as 
+%$Q_{i,j} = \{S(i/n, j/m), S((i+1)/n, j/m), S((i+1)/n, (j+1)/n), S(i/n, (j+1)/m) : i \in [1, n], j \in [1, m] \}]$)),
+Equations \ref{equ:pDerivativeU} and \ref{equ:pDerivativeV} shows how to compute the partial derivative for a given atom 
+in the $u$ and $v$ direction on the medial sheet, $\Delta u = 1/m$ and $\Delta v = 1/n$ is the 
+position of the next atom on the discrete grid.
+
+\begin{equation}
+ \partial p(u, v)_u = \left \{ \begin{array}{ll}
+                      p(u + \Delta u, v) - p(u , v) & u = 0\\
+                      \big (p(u + \Delta u, v) - p(u - \Delta u, v)\big )/2 & 0 < u < 1 \\
+                      p(u, v) - p(u - \Delta u, v) & u = 1
+                     \end{array} \right .
+\label{equ:pDerivativeU}
+\end{equation}
+
+Similarly on the $v$ direction.
+
+\begin{equation}
+ \partial p(u, v)_v = \left \{ \begin{array}{ll}
+                      p(u, v + \Delta v) - p(u, v) & v = 0\\
+                      \big (p(u, v + \Delta v) - p(u, v - \Delta v) \big ) /2 & 0 < v < 1 \\
+                      p(u, v) - p(u, v - \Delta v) & v = 1
+                     \end{array} \right .
+\label{equ:pDerivativeV}
+\end{equation}
+
+
+Equation \ref{equ:sheetNormal} defines the normal of an atom to the medial sheet, where the normal is computed
+from opposite spokes with tail at equal position on the MS.
+
+\begin{equation}
+  \begin{array}{cc}
+   N(u, v) = \frac{S(u, v) - S(u, 1 - v)}{||S(u, v) - S(u, 1 - v)||}  & u  \in [0, 1], v \in [0, 0.5] \\
+  \end{array}
+\label{equ:sheetNormal}
+\end{equation}
+
+\begin{figure} 
+ \centering  
+ \subfigure[Level 0]{\epsfig{file = interpolationMedialSheet0.eps, width = 7cm}}
+ \subfigure[Level 3]{\epsfig{file = interpolationMedialSheet3, width =7cm}}
+ \caption[Slab's MS interpolation.]{MS interpolation for a slab type s-rep. The top spoke is shown in magenta, the bottom spoke in cyan, the crest spoke in red,
+          the MS is shown in light blue and the normal to the sheet is shown in blue.}
+ \label{fig:interpolationMedialSheet}  
+\end{figure}
+
+\begin{equation}
+ H_{control} = \left [ \begin{array}{cccc}
+                    p_{11} & p_{12} 			& \partial p_{{11}_v}^T & \partial p_{{12}_v}^T \\
+                    p_{21} & p_{22}			& \partial p_{{21}_v}^T & \partial p_{{22}_v}^T \\
+                    \partial p_{{11}_u}^T & \partial p_{{12}_u}^T	& h_{0} & h_{0} \\
+                    \partial p_{{21}_u}^T & \partial p_{{22}_u}^T	& h_{0} & h_{0} \\
+                    
+                   \end{array} \right ]
+  \label{equ:hermiteControl}
+\end{equation}
+
+To interpolate the MS, a Hermite matrix patch is defined in equation \ref{equ:hermiteControl},
+where $\partial p(u,v)^T = \partial p(u,v) - (\partial p(u,v) \cdot N(u, v))N(u,v)$ is the projection of the discrete derivatives in directions $u$ or $v$ onto the tangent planes
+that are determined by the normals $N(u,v)$, so the MS interpolation depends on the normals and the discrete derivatives; $h_{0}$ is a vector filled with $0$. 
+
+\begin{equation}
+ \begin{array}{l}
+  H_1(s)= 2s^3 - 3s^2 + 1\\
+  H_2(s)= -2s^3 + 3s^2\\
+  H_3(s)= s^3 - 2s^2 + s\\
+  H_4(s)= s^3 - s^2\\
+ \end{array}
+\label{equ:weightFunctions}
+\end{equation}
+
+\begin{equation}
+ p(u, v) = \left [ \begin{array}{cccc} H_1(\hat u) & H_2(\hat u) & H_3(\hat u) & H_4(\hat u) \end{array} \right ]
+                H_{control}
+           \left [ \begin{array}{c} H_1(\hat v) \\
+				     H_2(\hat v) \\ 
+				     H_3(\hat v) \\ 
+				     H_4(\hat v) 
+		    \end{array} \right ]
+\label{equ:interpolatedPoint}
+\end{equation}
+
+The interpolated position for any atom on the MS is shown in equation \ref{equ:interpolatedPoint}, 
+using a Hermite matrix control patch and the weight functions defined in \ref{equ:weightFunctions}.
+$\hat u = (u - floor(u))/\Delta u$, where $floor(u)$ returns the $u$ coordinate of the atom at $p_{11}$,
+similarly for $\hat v$, notice that every patch is interpolated by varying $(\hat u, \hat v): 0 \rightarrow 1$.
+Figure \ref{fig:interpolationMedialSheet} shows the interpolation of the MS at different levels for the same figure.
+
+In a similar manner, the spoke interpolation can be done using Hermite based functions. Instead of using the control points
+$p(u, v)$, the spokes $S(u, v)$ are used. Accordingly, the discrete derivatives are computed for each spoke, the difference
+in this case is that no projection is done using the normals to the MS, the spoke interpolation only depends on the discrete derivatives. 
+
+
+\begin{figure} 
+ \centering  
+ \subfigure[Interpolated spokes]{\epsfig{file = interpolationSpokes.eps, width = 7cm} }
+ \subfigure[Union of spoke tips]{\epsfig{file = interpolationSurface3.eps, width = 7cm}}
+ \caption[Top and bottom surface interpolation.]{Top and bottom surfaces interpolated for a given atom. The surfaces are generated from the spoke interpolation.}
+ \label{fig:GeneratedSurfaceSpokeInterpolation}  
+\end{figure}
+
+The top and bottom surface can be generated using the mechanisms described above. 
+Figure \ref{fig:GeneratedSurfaceSpokeInterpolation} shows the implied surface generated by the union of 
+interpolated spoke tips.
+As mentioned before, both surfaces meet at the crest of the object, 
+Section \ref{sec:crestInterpolation} explains how to perform the crest interpolation which 
+can also be used to interpolate tubular figures.
+
+\subsection{Crest interpolation}
+\label{sec:crestInterpolation}
+
+For the crest interpolation, we wish to fit a surface that 
+does not collapse towards the interior of the object, in other words it should be as convex
+as possible while preserving $C^2$ continuity. Another property of the surface is that the directional 
+derivatives computed for every spoke should be matched, in order to produce a smooth surface, 
+similarly to the Hermite based interpolation previously explained.
+
+To explain the method, lets define first a function that does interpolation 
+for a one dimensional entity, the example consists on interpolating the lengths 
+of two spokes that are parameterized by $r(\theta)$.
+The same problem can be extended to 3 dimensions where the interpolation produces a space curve.
+Finally the same procedure is used to produce interpolated surfaces.
+
+\begin{equation} 
+ \frac{\partial^2 r(\theta)}{\partial \theta} = q_0  +  q_1  \theta + q_2  \theta^2  
+ \label{equ:curvature}
+\end{equation}
+
+The first step is to define a quadratic function of the curvature, as shown in Equation
+\ref{equ:curvature}, we would like to enforce convexity in the interpolated curve.
+By integrating this equation twice, we find the function that gives us the length for $\theta \in [0, \theta_{max}]$.
+
+\begin{eqnarray} 
+  \frac{\partial r(\theta)}{\partial \theta} &=& \int_0^{\theta_{max}} \frac{\partial^2 r(\theta)}{\partial \theta} \partial \theta \\
+  \frac{\partial r(\theta)}{\partial \theta} &=& \frac{\partial r_0}{\partial \theta} + q_0  \theta + \frac{1}{2}  q_1  \theta^2 + \frac{1}{3}  q_2  \theta^3  \\
+  r(\theta) &=& \int_0^{\theta_{max}} \frac{\partial r(\theta)}{\partial \theta} \partial \theta \\
+  r(\theta) &=& r_0 + \frac{\partial r_0}{\partial \theta}  \theta + \frac{1}{2}  q_0  \theta^2 + \frac{1}{6}  q_1  \theta^3 + \frac{1}{12}  q_2  \theta^4  
+\end{eqnarray}
+
+We start by solving for coefficients $q_1$ and $q_2$,
+using the system of equations $r(\theta)$, $\partial r(\theta)/\partial \theta$ and $\partial^2 r(\theta)/\partial \theta$, 
+as shown in equation \ref{equ:solveQ1}.
+
+\begin{eqnarray} 
+q_2 &=& \frac{6}{\theta_{max}^4} (2 \partial r_{end} \theta_{max} + q_0 \theta_{max}^2 - 6 r_{end} + 6 r_0 + 4 \partial r_0 \theta_{max}) \\
+q_1 &=& \frac{-6}{\theta_{max}^3} (-\partial r_{end} + r_0 + \partial r_0 \theta_{max} +  \frac{q_0}{2} \theta_{max} + \frac{q_2}{12} \theta_{max}^4)
+\label{equ:solveQ1}
+\end{eqnarray} 
+
+There exists a solution to the problem for every $q_0$ but
+the optimal solution is found when $q_0$ minimizes the curvature as
+shown in Equation \ref{equ:minimizeCurvature}.
+
+\begin{equation}  
+  \hat q_0 = \operatorname*{arg\,min}_{q_0} \sum_{\theta = 0}^{\theta_{max}} \frac{\partial^2 r(\theta)}{\partial \theta}
+  \label{equ:minimizeCurvature}
+\end{equation}
+
+Notice that the parameters $r_0$, $r_{end}$, $\partial r_0$ and $\partial r_{end}$ correspond to: 
+initial and final lengths, rates of the change at $r_0$ and $r_{end}$ respectively.
+
+\begin{figure} 
+ \centering  
+ \epsfig{file = interpolationCrest0.eps, width =9cm}
+ \caption[Radius interpolation.]{Radius interpolation showing the result for different $\partial r_{end}$.}
+ \label{fig:interpolateRadius}  
+\end{figure}
+
+To produce space curves, the fitting is done for $[x, y, z]$ separately, 
+using the discrete information given by the s-rep,
+it is possible to retrieve $p_0$, $p_{end}$, and compute the discrete derivatives $\partial p_0$, and $\partial p_{end}$ 
+which are the parameters to produce the fit.
+To produce the crest curve, the crest atoms are considered to be on a loop 
+where the crest positions are given by $cp_n$ where $n$ is the number of crest positions.
+The directional derivatives are calculated as $\partial cp_j = (cp_{j + 1} - cp_{j - 1})/2$
+which are projected onto the tangent plane given by MS normal at each atom
+$\partial \hat {cp_j} = \partial cp_j - (\partial cp_j \cdot N_{cp_j})N_{cp_j}$.
+Figure \ref{fig:crestCurve} shows the interpolated crest as a space curve.
+
+\begin{figure} 
+ \centering  
+ \epsfig{file = interpolationCrestCurve1.eps, width = 8cm}
+ \caption[Interpolated crest curve.]{The interpolated crest curve is shown in yellow, using the crest positions to compute the directional derivatives and projecting the derivatives onto the tangent plane.}
+ \label{fig:crestCurve}  
+\end{figure}
+
+\begin{figure} 
+ \centering  
+  \subfigure[Crest Spokes Top and Bottom]{\epsfig{file = interpolationCrestSpokes.eps, width = 7cm}}
+  \subfigure[Union of spokes to produce the crest]{\epsfig{file = interpolationCrestSpokes0.eps, width = 7cm}}
+ \caption[Slab's surfaces interpolation.]{The method interpolates top, crest and bottom spokes separately. 
+	  A second interpolation is produced using the interpolated top, crest and bottom spokes in order to
+	  join both sides of the object at the crest.}
+ \label{fig:crestSpokes}  
+\end{figure}
+
+The same interpolation mechanism is used for top, crest and bottom spokes,
+therefore, for a given $t$, 
+it is possible to find the top spoke $CS(t)^1$, crest spoke $CS(t)^0$ and bottom spoke $CS(t)^{-1}$ 
+plus the space curve to find the positions $Cp(t)$ and $t \in [0, 1]$ goes around 
+the whole crest of the object. 
+
+Finally we perform a second interpolation to generate the spokes from $top \rightarrow bottom$, which allows
+us to produce the interpolated crest. 
+Figure \ref{fig:crestSpokes} shows the interpolated spokes and the union of spokes forming a piece of the crest surface.
+Figure \ref{fig:srepInterpolated} shows an example of the interpolated surface 
+of an amygdala and the crest that joins both surfaces.
+
+\begin{figure} 
+ \centering  
+ \epsfig{file = interpolationSrepSurface.eps, width = 8cm}
+ \caption[Amygdala's s-rep.]{Complete s-rep of an amygdala, with top, bottom and crest surfaces. 
+          The level of interpolation is higher to produce a smoother boundary.}
+ \label{fig:srepInterpolated}  
+\end{figure}
+
+\subsubsection{Tubular objects} 
+
+Different organs in the human body, 
+such as blood vessels, the airways, the intestines 
+among many others are best represented using tubular structures.
+Representing these objects with slab type s-reps is more difficult, due to 
+the fact that the MS cannot be placed in an intuitive manner. 
+Instead, a parameterized space curve provides a more stable representation of a MA. 
+Prominent authors such as \cite{binford1971visual}
+proposed generalized cylinders, 
+this method consists of a space curve, 
+or axis, and a cross section function defined on the axis. The function is usually an ellipse. 
+Another approach is the one proposed by \cite{huang1993generalized} named generalized tubes,
+it is a two step approach, to segment and model tubular structures.
+It starts with a local contour detection followed by a global 
+recognition stage where the tube figures from the first stage are verified.
+They have been widely used on segmentation and modeling procedures,
+unfortunately, it is not trivial to include shape statistics on the approaches mentioned before, 
+they are best conceived to model individual tubes and not a population of them.
+For this reason the tubular model proposed here is closely related 
+to quasi-tubes, a model proposed by \cite{saboomedial}.
+
+\begin{figure} 
+ \centering  
+  \subfigure[Interpolated spokes of a tube figure, the MA is shown in yellow and the spokes in cyan.
+             The MA is parameterized by a single parameter $u$, while the spokes on the MA are parameterized by $(u, \phi)$, 
+             $\tau$ represents the portion of the spoke from the MA to the boundary.]{\epsfig{file = interpolationTube0.eps, width = 6cm}}
+  \subfigure[The union of spoke tips produce the boundary of the tubular object]{\epsfig{file = interpolationTube1.eps, width = 6cm}}
+ \caption[Quasi-tube interpolation.]{The method crest interpolation method is also capable of interpolating tube figures.}
+ \label{fig:tubular}  
+\end{figure} 
+
+Figure  \ref{fig:tubular} shows the result of the interpolation using the same 
+formulation from the crest method. 
+These quasi-tubes are defined in the same manner as s-reps, $S_{rep} = \{p_i, S_i\}$, 
+the difference is that the spokes are all placed following a space curve that 
+defines the MA, the interpolation is done with the spokes that share the same hub.
+They are differentiated by the angle $\phi$ from 
+the spoke located at $\phi = 0$ which is highlighted in magenta. 
+
+Since the definition of this tubular object is equivalent to 
+the definition of an s-rep, 
+the statistical framework CPNS 
+is also compatible, 
+however, tubular objects are not widely used on this dissertation and
+will be reserved for future work. 
+
+\subsection{Internal coordinates of an object}
+\label{sec:internalCoordinates}
+
+The last subject that is addressed on geometric representation
+are internal coordinates of an object.
+
+The amygdala shown in Figure \ref{fig:srepInterpolated} 
+is composed by 18 atoms placed on a double sided grid $(m, n) = (6, 3)$, where every spoke's tail is placed.
+The total number of spokes is 26 and
+in order to give
+a unique coordinate to every spoke, 
+the MS is unfold. 
+
+\begin{figure} 
+ \centering  
+ \epsfig{file = x2uMapGrid.eps, width = 13cm}
+ \caption[Unfolding the s-rep.]{Unfolded s-rep of $6 \times 3$ atoms. Each intersection corresponds to a spoke in the s-rep,  
+          the crest spokes repeat them selfs on the top and bottom sides. 
+          The corners of the object are shown with the blue cross, 
+          they also correspond to the 4 crest spokes that join top, bottom and connect the sides
+          of the object. 
+          Using this unfolded version of the MS we provide a unique $u, v$ value represented by the color gradient,
+          the grid size is $(m + 1) \times 2\times(n + 1)$.
+          }
+ \label{fig:unfoldedSlab}  
+\end{figure}
+
+Figure \ref{fig:unfoldedSlab} shows a representation 
+of the unique $(u, v$) coordinate given to 
+every spoke in the object, they are represented by the color gradient
+using red to for the $u$ direction and green for the $v$ direction. 
+The blue color is used to represent the spoke length, in this case $\tau = 0$.
+
+By means of the mechanisms described to interpolate the MS, top, bottom and crest spokes, 
+a function $U2X(u, v, \tau) = [x, y, z] | (u, v, \tau) \in [0, 1])$ is designed to retrieve a position inside the 
+object by querying $(u, v, \tau)$ coordinates, enabling to compute
+the $X2U$ map.
+Figure \ref{fig:x2uMap} shows the $X2U$ map of the amygdala.
+
+\begin{figure} 
+ \centering  
+  \subfigure[Top side]{\epsfig{file = x2uMapTop.eps, width = 7cm}}
+  \subfigure[Bottom side]{\epsfig{file = x2uMapBottom.eps, width = 7cm}}
+ \caption[X2U's map volume rendering.]{Volume rendering of an $X2U$ map showing both sides when $\tau = 1$}
+ \label{fig:x2uMap}  
+\end{figure} 
+
+In fact a $X2U$ map provides the means to go from object coordinates to a cube figure,
+this parametrization will be used on Chapter \ref{chapter:textureSynthesis} 
+to map the generated volumetric textures to an object. 
+

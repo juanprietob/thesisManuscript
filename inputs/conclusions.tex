@@ -1,0 +1,128 @@
+\chapter{Conclusions and perspectives}
+%\addcontentsline{toc}{part}{Conclusions and perspectives}
+\label{chapter:Conclusions}
+
+\section{Synopsis of the work}
+
+The principal objective of this dissertation was to propose a technique able 
+to model internal and external features of organs. 
+Describing internal features and 
+surface characteristics closes the gap 
+between virtual objects and objects in the real world. 
+Objects with such characteristics are needed to improve 
+existent simulation procedures. 
+
+After reviewing the state of the art techniques for 
+shape modeling, it can be concluded that 
+s-reps provide features superior to other techniques. 
+One of the most important characteristic of this technique
+is the possibility to describe the interior of an object. 
+This quality was widely used through this dissertation.
+It allows including information from different spatial scales
+or sources such as histology images and/or physical parameters. 
+
+To prove the capabilities of s-reps, 
+the human brain became the target organ to be modeled.
+From this task came the 
+most important contribution of this dissertation,
+which is the procedure to model the 
+cerebral cortex using s-reps. 
+
+The cerebral cortex has never been modeled 
+with techniques describing internal features. 
+From now on, a single non-branching object 
+can be used to describe both cortical surfaces plus the interior. 
+S-reps provide new ways to analyze cortical columns and analyze cortical lesions in a different parametric space.
+
+Besides describing the shape of the cortex, it was proven 
+that a population of cortices can be described by a mean shape, a set of eigenmodes 
+and some coefficients. CPNS and the cortex representation 
+enabled a compact representation or a statistical description of thickness 
+variations in the cortex. 
+
+The second objective of this dissertation, \textit{i.e.}, 
+to provide a mechanism to model the volumetric properties of an object,
+was fulfilled with a method to synthesize solids. 
+This technique is compatible with s-reps and 
+allows describing the interior of the object using parameters from various sources such as: 
+RGB textured images; images from histology; images from $\mu MR$ and $\mu CT$; and physical parameters. 
+
+A simulation of the brain was done using 
+the techniques just described. 
+S-reps of the subcortical structures were fitted 
+to real MRI images segmented with \textit{Freesurfer}.
+The subcortical structures include: amygdala, caudate, hippocampus, lateral ventricles, pallidum and putamen.
+
+Using this set of s-reps, 
+the internal properties of the objects were enhanced 
+with textures of physical parameters. 
+MRI images were simulated using the virtual object and \textit{SimuBloch}. 
+The MRIs were validated using the automatic segmentation 
+procedure proposed by \textit{Freesurfer}.
+
+\section{Future work}
+
+There are three possibilities identified for future work.
+Improvement of the statistical shape description of the cortex, 
+improvement of the simulation framework
+and working towards the establishment of a technique 
+to estimate scalar features based on shape descriptions.
+
+The shape description of the cortex 
+with s-reps and CPNS could
+provide new research opportunities to
+analyze shape variability in control and pathological subjects for crosswise (multiple subjects)
+and longitudinal (same subject but multiple acquisitions) scenarios.
+The shape description of the cortex could help researchers understand 
+brain development and to identify the principal shape variations as the human brain grows. 
+%Enhancing current knowledge should lead to novel theories. 
+
+The simulation framework can be improved 
+by acquiring better textured samples of physical parameters 
+and generating statistical shape descriptions of the organ structures 
+modeled with s-reps.
+
+As mentioned in Section \ref{sec:ConclusionsSimu} the full potential of 
+the approach to simulate images is not achieved. The textured samples 
+do not contain structural information and they have a low resolution. 
+
+With the statistical shape descriptions of organs, 
+a completely different set of structures can be generated
+using a few coefficients.
+Control and pathological shapes can be combined to produce new simulated images.
+
+There are two major applications for this framework, 
+the optimization of image acquisition parameters 
+and the validation of segmentation algorithms.
+
+Finally, 
+a methodology to estimate scalar features based on shape description needs to 
+be established. 
+For example, we wish to estimate the gray matter anisotropies
+in thalamic nuclei based on a fitted s-rep to the structure
+and clinical resolution DTI images. 
+
+The nuclei are only visible in a high resolution DTI acquisition. 
+Unfortunately, this acquisition cannot be done routinely.
+In order to identify this feature, 
+a set of patients with DTI and $T1-$weighted image
+acquisitions will be used in the study. 
+
+The procedure will use the $T1-$weighted images to fit s-reps.
+The fitting produces tight representations of an s-rep
+and increases the correspondence between internal positions $[u, v, \tau]$ among thalami.
+
+Shape statistics will be computed using CPNS, 
+and a statistical analysis will be done for 
+the nuclei density using the coordinate system $[u, v, \tau]$. 
+This is possible since the internal positions are in correspondence.
+
+The statistics will contain shape and nuclei density 
+descriptions for each position inside the s-rep. 
+
+To estimate the nuclei density in a new thalamus, 
+the mean shape produced by CPNS is fitted to the structure.
+The nuclei density can be estimated based on 
+the shape deformation and the density statistical description. 
+
+This approach could be use to detect other type of scalar features. 

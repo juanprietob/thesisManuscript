@@ -1,0 +1,125 @@
+% ********** Appendix 1 **********
+\chapter{Principal Component Analysis}
+\label{sec:ApendixPCA}
+
+Principal Component Analysis (PCA) is a way of identifying patterns in the data.
+PCA is able to detect the principal directions of variation and
+is a powerful tool for analysing data that lives in high dimensional spaces.
+Common uses of PCA are to produce compress or compact datasets
+by finding and removing redundant information. 
+After the compression, any of the points in the original dataset can be represented
+using a small number of parameters.
+
+The following sections explains how to use PCA. 
+
+\section{Method}
+
+The mean of the data must be substracted from each dimension for PCA to work properly.  
+By doing this, the data set has mean zero. 
+
+\subsection{Compute the mean}
+
+\begin{equation}
+ \bar{x} = \frac{1}{s} \sum^s_{i=1} x_i
+\end{equation}
+$x$ is a dataset where each column represents an object from the population.  
+$s$ is the number of objects in $x$, 
+$\bar{x}$ is a vector with the mean of the data calculated for each dimension.
+
+\subsection{Compute the covariance of the data}
+
+\begin{equation}
+ cov(X, Y) = \frac{1}{s-1} \sum^s_{i=1} (X_i - \bar{X})(Y_i - \bar{Y})
+ \label{equ:covariance}
+\end{equation}
+
+\begin{equation}
+ C = C_{ab} = cov(Row(x, a), Row(x, b))
+ \label{equ:covarianceMatrix}
+\end{equation}
+
+The covariance matrix $C$ \ref{equ:covarianceMatrix} is a square matrix that contains at each position the covariance \ref{equ:covariance} between 
+the $a$ and $b$ dimension of the dataset $x$. Notice that when $a = b$ we get the regular variance.
+$Row(x, a)$ retrieves row $a$ from the data. 
+
+\subsection{Perform eigenanalysis on the covariance}
+
+\begin{equation}
+ C = Q \Lambda Q^{-1}
+ \label{equ:eigenDecomposition}
+\end{equation}
+Equation \ref{equ:eigenDecomposition} shows how to perform an eigenanalysis
+where $Q$ is a square matrix whose $i^{th}$ column is the eigenvector $q_i$
+of $C$ and $\Lambda$ is the diagonal matrix whose diagonal elements are the 
+corresponding eigenvalues $\lambda_i$, i.e., $\Lambda_{ii}=\lambda_i$.
+All eigenvectors must satisfy the following:
+
+\begin{equation}
+ C q_i = \lambda_i q_i 
+ \label{equ:eigenAnalysis}
+\end{equation}
+
+Where $\lambda$ is the eigenvalue of the eigenvector $v$. 
+The eigenvectors are unit scale and the eigenvalues 
+are sorted so that $\lambda_i \geq \lambda_{i+1}$.
+
+\subsection{Compute the total variance}
+
+\begin{equation}
+ V_t = \sum_t \lambda_i
+ \label{equ:totalVariance}
+\end{equation}
+
+Each eigenvalue gives the variance of the data about the mean in the
+direction of the corresponding eigenvector. 
+
+\subsection{Use a number of eigenvalues}
+
+\begin{equation}
+ \sum_{i=1}^t \lambda_i \geq f_v V_t
+ \label{equ:chooseVectors}
+\end{equation}
+
+To represent the data with the most significative information a number of eigenvectors $P$ is chosen
+by using their corresponding eigenvalues. 
+As show in equation \ref{equ:chooseVectors}, $f_v \in [0, 1]$ defines the proportion of the total variation 
+in the data that is going to be explained. 
+For example: in order to explain $95\%$ of the information, $f_v = 0.95$, this means that
+the first $n$ eigenvectors are used whose eigenvalues add up to $0.95 V$.
+
+\section{Producing a compact data set}
+
+To produce the compressed data set, a matrix $P=(p_1 | p_2 | ... | p_n)$ of the eigenvectors chosen to describe the dataset is used, as shown in equation \ref{equ:chooseVectors}.
+The matrix $P$ is multiplied by the adjusted data set and we get $x_c$ a compact representation of the data, as shown in equation \ref{equ:compressData}.
+
+\begin{equation}
+ x_c = P^T (x - \bar{x}) 
+ \label{equ:compressData}
+\end{equation}
+
+\section{Recovering the original data}
+
+In some situations such as compression, getting the original data back is important. 
+When a reduced number of eigenvectors is used, 
+the transformation to get the original data, looses some information.
+Notice that the only way to get the original data back is by using all the eigenvectors.
+
+\begin{equation}
+ (x - \bar{x}) = (P^T)^{-1} x_c
+ \label{equ:dataBack0}
+\end{equation}
+
+In the case where all the eigenvectors are used, it turs out that the inverse of $P$ is equal to the transpose, 
+therefore $(P^T)^{-1} = P$
+
+\begin{equation}
+ x = P x_c + \bar{x}
+ \label{equ:dataBack1}
+\end{equation}
+
+Equation \ref{equ:dataBack1} also applies even when a set of eigenvectors is used, as mentioned before
+some data is lost during the final transformation.
+
+
+
+% ********** End of appendix **********

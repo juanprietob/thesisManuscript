@@ -1,0 +1,144 @@
+\NeedsTeXFormat{LaTeX2e}[1999/01/01]
+\ProvidesPackage{inputs/thesisCreatis}[2003/01/01]
+
+%------------------------------------------------------------------------------%
+%----------------- Redéfinition des commandes part et chapter -----------------%
+\def\ligne#1{\rule{\textwidth}{#1}}
+
+\makeatletter
+\def\@part[#1]#2{%
+			\vspace*{8cm}
+      \ifnum \c@secnumdepth >-2\relax
+        \refstepcounter{part}%
+        \addcontentsline{toc}{part}{\thepart\hspace{1em}#1}%
+      \fi
+      \markboth{}{}%
+      \begin{flushright}
+				\interlinepenalty \@M
+       	\normalfont
+       	\ifnum \c@secnumdepth >-2\relax
+        	\Huge \fontfamily{cmr} \selectfont ~\thepart \quad
+       	\fi
+       \Huge\fontfamily{cmr} \selectfont #2 \par
+     	\end{flushright}
+      \vspace*{0.5cm}
+      \ligne{0.7mm}
+      \@endpart}
+
+
+\def\@makechapterhead#1{%
+  \vspace*{50\p@}%
+  {\parindent \z@ 
+   \raggedleft 
+   \normalfont
+   \interlinepenalty\@M
+   \ifnum \c@secnumdepth >\m@ne
+   		\huge \@chapapp\space \Huge \thechapter\quad \par
+   \fi
+   \vspace*{1.5cm}
+   \ligne{0.5mm}
+   \Huge #1
+   \ligne{0.5mm}
+   \vskip 40\p@
+  }}
+%------------ Fin de la Redéfinition des commandes part et chapter ------------%
+%------------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------------%
+%-------------------------- Declaration de packages ---------------------------%
+%\usepackage{color}
+\definecolor{darkblue}{rgb}{0, 0.0, 0.1}
+\definecolor{red}{rgb}{1.0, 0.0, 0.0}
+
+%-- Hyperref package parameterization
+%-- Declare first for compatibility
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true, 
+	pdfauthor={\authorname}, 
+	linkcolor=darkblue,	% color of internal links
+	citecolor=blue,		% color of links to bibliography
+	filecolor=black,	% color of file links
+	urlcolor=cyan		% color of external links
+}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{vmargin} 
+\usepackage{indentfirst} 
+\usepackage{textcomp}
+\usepackage{setspace}
+\usepackage{soul}
+\usepackage{longtable}
+
+\usepackage{cite}
+
+% *** GRAPHICS RELATED PACKAGES ***
+%\usepackage{ifpdf}
+%\ifpdf
+%	\usepackage[pdftex]{graphicx}
+%	\graphicspath{{data/pdf/},{data/png/},{data/}}
+%	\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+%\else
+%	\usepackage[dvips]{graphicx}
+%	\graphicspath{{data/eps/}}
+%	\DeclareGraphicsExtensions{.eps}
+%\fi
+\newcommand{\taille}{6} %1
+
+% *** MATH PACKAGES ***
+\usepackage[cmex10]{amsmath}
+\usepackage{amssymb}
+% *** ALIGNMENT PACKAGES ***
+\usepackage{array}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+% *** SUBFIGURE PACKAGES ***
+\usepackage[caption=false,font=footnotesize]{subfig}
+% *** FLOAT PACKAGES ***
+\usepackage{float}
+\usepackage{stfloats}
+\usepackage{fixltx2e}
+
+\usepackage{caption}
+\usepackage{pdfpages}
+
+%-------------------------- Fin de la Declaration ---------------------------%
+%----------------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------------------------------%
+%-------------------------- Définition des en-têtes et pieds de page ---------------------------%
+
+\usepackage{fancyhdr}			% Gestion des en-têtes et pieds de pages
+
+\pagestyle{fancy}			% Utilisation du style fancy pour le document
+
+\fancyhf{}				% Réinitialisation des en-têtes et pieds de pages
+
+\renewcommand{\headrulewidth}{0.4pt}	% Définition d'une ligne pour séparer l'en-tête du corps de texte
+\fancyhead[LE]{\scriptsize{\leftmark}}	% On écrit en haut à gauche (L) sur les pages paires (E) le chapitre courant
+\fancyhead[RO]{\scriptsize{\rightmark}}	% On écrit en haut à droite (R) sur les pages impaires (O) la section courante
+
+\renewcommand{\footrulewidth}{0.4pt}	% Définition d'une ligne pour séparer le pied de page du corps de texte
+\fancyfoot[LE, RO]{\thepage}		% On écrit en bas à gauche sur les paires, en bas à droite sur les impaires le nom 
+\fancyfoot[RE, LO]{\small{\authorname}}	% On écrit en bas à gauche sur les impaires, en bas à droite sur les paires la page
+
+%------------------------ Fin définition des en-têtes et pieds de page -------------------------%
+%-----------------------------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------------------%
+%-------------------------- Définition de commandes perso ---------------------------%
+\newcommand{\todo}[1]{\textbf{\emph{\textcolor{red}{#1}}}}
+
+\newcommand{\ie}{\emph{i.e. }}
+\newcommand{\eg}{\emph{e.g. }}
+\newcommand{\etal}{\emph{et al. }}
+
+%--------------------- Fin de la Définition de commandes perso ----------------------%
+%------------------------------------------------------------------------------------%
+
+%% Fin du package
+\endinput
+

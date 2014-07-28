@@ -1,0 +1,102 @@
+\documentclass[a4paper,twoside]{article}
+
+\usepackage[a4paper]{geometry}
+\usepackage{anysize}
+%\marginsize{left}{right}{top}{bottom}
+\marginsize{2.6cm}{2.6cm}{3.3cm}{4.2cm}
+
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{calc}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{multicol}
+\usepackage{pslatex}
+\usepackage{apalike}
+
+\usepackage[small]{caption}
+
+
+\subfigtopskip=0pt
+\subfigcapskip=0pt
+\subfigbottomskip=0pt
+
+%%%%%%%%%
+
+\usepackage{url}
+\usepackage{multirow}
+
+\begin{document}
+
+\title{\uppercase{Crest Spokes Interpolation}}
+
+
+\section{\uppercase{Curve fit minimizing curvature}}
+\label{sec:curvefit}
+
+\begin{equation}
+ r(\theta) = r_0 + \frac{\partial r_0}{\partial \theta}  \theta + \frac{1}{2}  q_0  \theta^2 + \frac{1}{6}  q_1  \theta^3 + \frac{1}{12}  q_2  \theta^4  
+\end{equation}
+
+\begin{equation}
+ \frac{\partial r(\theta)}{\partial \theta} = \frac{\partial r_0}{\partial \theta} + q_0  \theta + \frac{1}{2}  q_1  \theta^2 + \frac{1}{3}  q_2  \theta^3  
+\end{equation}
+
+\begin{equation}
+ \frac{\partial^2 r(\theta)}{\partial \theta} = q_0  +  q_1  \theta + q_2  \theta^2  
+\end{equation}
+
+\begin{equation}
+q_1 = \frac{-(2*(-\partial r_{end} + \partial r_0 + q_0 \theta_{max} + \frac{1}{3} q_3  \theta_{max}^3))}{\theta_{max}^2}
+\end{equation}
+
+\begin{equation}
+q_2 = \frac{(6 (-6 r_{end} + 6 r_0 + 4 \partial r_0 \theta_{max} + q_1 \theta_{max}^2 + 2 \theta_{max} \partial r_{end})}{\theta_{max}^4}
+\end{equation}
+
+
+\section{\uppercase{Srad Calculation for the crest}}
+\label{sec:Sradcalculation}
+ 
+
+
+\begin{equation}
+ \kappa_{rel} = \frac{\frac{\partial U_1}{\partial t} \cdot e_3 }{ \gamma' \cdot e_3}
+ \label{equ:kapparel} 
+\end{equation}
+
+
+\begin{equation}
+ S_{rad} = \bigg( \begin{matrix} \frac{-1}{\epsilon r} & \beta_2 (-\frac{1}{\epsilon r} - \frac{ \kappa_{rel} } { 1 - \epsilon r \kappa_{rel} }) \\ 0 & \frac{\kappa_{rel}}{ (1 - \epsilon r \kappa_{rel})} \end{matrix} \bigg)
+\end{equation}
+
+
+\begin{equation}
+ U_{1} = cos(\theta)e_1 + sin(\theta)e_2 
+\end{equation}
+
+\begin{equation}
+U_{\theta} = -sin(\theta)e_1 + cos(\theta)e_2
+\end{equation}
+
+\begin{equation}
+\frac{\partial U_1}{\partial t}  = \beta_1 U_1 + \beta_2 U_{\theta} - \kappa_{rel} \gamma'
+\end{equation}
+
+\begin{equation}
+\beta_2 = (\kappa_{rel} (\gamma' - (\gamma' \cdot U_1 )U_1 ) - \frac{\partial U_1}{\partial t} ) \cdot U_{\theta})
+\end{equation}
+
+\begin{equation}
+\frac{\partial S}{\partial u} = rS_{rad}^{T} \bigg( \begin{matrix} p_{u1} \\ p_{u2} \end{matrix} \bigg) (U^T U - I) + \bigg( \begin{matrix} r_{u1} \\ r_{u2} \end{matrix} \bigg) U
+\end{equation}
+
+\begin{equation}
+\bigg( \begin{matrix} r_{u1} \\ r_{u2} \end{matrix} \bigg) = -\bigg(\begin{matrix} p_{u1} \\ p_{u2} \end{matrix} \bigg) U^T
+\end{equation}
+
+
+\vfill
+\end{document}

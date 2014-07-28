@@ -1,0 +1,36 @@
+% ********** Abstract **********
+\cleardoublepage
+
+\section*{\huge Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Geometric modeling has been one of the most researched areas 
+in the medical domain.
+Today, there is not a well established methodology to model the shape of an organ. 
+There are many approaches available and each one of them have different strengths and weaknesses.
+
+Most state of the art methods to model shape use surface information only.
+There is an increasing need for techniques to support volumetric information.
+Besides shape characterization, a technique to differentiate objects by shape is needed.
+This requires computing statistics on shape.
+
+%The current challenge of research in life sciences is to create
+%models to represent the surface, the interior of an object,
+%and give statistical differences based on shape.
+
+In this work, I use a technique for shape modeling that is
+able to model surface and internal features, and 
+is suited to compute shape statistics.
+
+Using this technique (s-rep), a procedure to model the human cerebral cortex is proposed. 
+This novel representation offers new possibilities to analyze cortical lesions
+and compute shape statistics on the cortex.
+
+The second part of this work proposes a methodology to 
+parameterize the interior of an object.
+The method is flexible and can 
+enhance the visual aspect or the description of physical properties of an object.
+
+The geometric modeling enhanced with physical parameters is used 
+to produce simulated magnetic resonance images.
+This image simulation approach is validated by analyzing the behavior and performance of classic segmentation algorithms for real images.

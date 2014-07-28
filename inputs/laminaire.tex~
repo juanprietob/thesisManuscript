@@ -1,0 +1,73 @@
+\newpage
+\ifodd \thepage ~\newpage ~\fi
+
+\pagestyle{empty}
+%\addcontentsline{toc}{subsubsection}{}
+
+\begin{changemargin}{-2cm}{-1cm}
+
+\textbf{Abstract} \\
+
+Geometric modeling has been one of the most researched areas 
+in the medical domain.
+Today, there is not a well established methodology to model the shape of an organ. 
+There are many approaches available and each one of them have different strengths and weaknesses.
+
+Most state of the art methods to model shape use surface information only.
+There is an increasing need for techniques to support volumetric information.
+Besides shape characterization, a technique to differentiate objects by shape is needed.
+This requires computing statistics on shape.
+
+%The current challenge of research in life sciences is to create
+%models to represent the surface, the interior of an object,
+%and give statistical differences based on shape.
+
+In this work, we use a technique for shape modeling that is
+able to model surface and internal features and 
+is suited to compute shape statistics.
+
+Using this technique, a procedure to model the human cerebral cortex is proposed. 
+This novel representation offers new possibilities to analyze cortical lesions
+and compute shape statistics on the cortex.
+
+The second part of this work proposes a methodology to 
+parameterize the interior of an object.
+The method is flexible and can 
+enhance the visual or the physical properties of an object.
+
+The geometric modeling enhanced with physical parameters is used 
+to produce simulated magnetic resonance images.
+This image simulation approach is validated by analyzing the behavior and performance of classic segmentation algorithms for real images.\\
+
+\textbf{Keywords}\\
+S-rep, texture synthesis, shape statistiques, medical image simulation, cortex modeling.\\
+\\
+
+\textbf{R\'esum\'e} \\
+
+La mod/'elisation g/'eom/'etrique a /'et/'e l'un des sujets les plus /'etudi/'es pour la repr/'esentation des structures anatomiques dans le domaine m/'edical.
+Aujourd'hui, il n'y a toujours pas de m/'ethode bien /'etablie pour mod/'eliser la forme d'un organe.
+Cependant, il y a plusieurs types d'approches disponibles et chaque approche a ses forces et ses faiblesses.
+
+La plupart des m/'ethodes de pointe utilisent uniquement l'information surfacique mais
+un besoin croissant de mod/'eliser l'information volumique des objets appara\^{\i}t.
+En plus de la description g/'eom/'etrique, il faut pouvoir diff/'erencier les objets d'une population selon leur forme.
+Cela n/'ecessite de disposer des statistiques sur la forme dans organe dans une population donn/'e.
+
+Dans ce travail de th/`ese, on utilise une repr/'esentation capable de mod/'eliser les caract/'eristiques surfaciques et internes d'un objet.
+La repr/'esentation choisie (s-rep) a en plus l'avantage de permettre de d/'eterminer les statistiques de forme pour une population d'objets.
+
+En s'appuyant sur cette repr/'esentation, une proc/'edure pour mod/'eliser le cortex c/'er/'ebral humain est propos/'ee.
+Cette nouvelle mod/'elisation offre de nouvelles possibilit/'es pour analyser les l/'esions corticales
+et calculer des statistiques de forme sur le cortex.
+
+La deuxi/`eme partie de ce travail propose une m/'ethodologie pour d/'ecrire de mani/`ere param/'etrique l'int/'erieur d'un objet.
+La m/'ethode est flexible et peut am/'eliorer l'aspect visuel ou la description des propri/'et/'es physiques d'un objet.
+
+La mod/'elisation g/'eom/'etrique enrichie avec des param/`etres physiques volumiques
+est utilis/'ee pour la simulation d'image par r/'esonance magn/'etique pour produire des simulations plus r/'ealistes.
+Cette approche de simulation d'images est valid/'ee en analysant le comportement et les performances des m/'ethodes de segmentations
+classiquement utilis/'ees pour traiter des images r/'eelles du cerveau.
+
+
+\end{changemargin}

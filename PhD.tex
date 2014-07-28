@@ -1,0 +1,123 @@
+\documentclass[11pt, twoside, a4paper]{book}
+
+\newcommand\authorname{Juan Carlos PRIETO}	% Pensez a mettre votre nom ici
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{vmargin} 
+\usepackage{indentfirst} 
+\usepackage{textcomp}
+\usepackage{setspace}
+\usepackage{soul}
+\usepackage{longtable}
+\usepackage{array}
+
+\usepackage{cite}
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{wrapfig}
+\usepackage{calc}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{hyperref} 
+\usepackage{enumerate}
+
+\newtheorem{definition}{Definition}
+
+\graphicspath{{./logo/}{./data/eps/}}
+
+\makeatletter
+\renewcommand{\@chapapp}{}% Not necessary...
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
+
+\usepackage{fancyhdr}
+
+
+%\usepackage{inputs/thesisCreatis}
+
+\begin{document}
+\sloppy
+\pagenumbering{roman}
+
+\frontmatter
+% Définition de la page de garde
+\clearpage
+
+\input{inputs/front}
+
+% Remerciements
+\input{inputs/ack}
+
+% Abstract
+\input{inputs/abstract}
+\input{inputs/abstractfr}
+
+% Definition de la table des matières
+% \clearpage ~~~~ \thispagestyle{plain} \newpage\thispagestyle{plain}
+\cleardoublepage
+% \phantomsection
+\listoffigures
+\clearpage
+\tableofcontents								% Création de la table des matières
+\addcontentsline{toc}{chapter}{Contents}
+
+% Liste des symboles
+\input{inputs/symbols}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%% MAIN
+%%%%%%%%%%%%%%%%%%%%%%%
+\mainmatter
+
+\pagestyle{plain}
+\cfoot{\thepage}
+
+\pagenumbering{arabic}
+
+\input{Introduction/Introduction}
+\input{ChapterSrep/ChapterSrep}
+\input{ChapterCortex/ChapterCortex}
+\input{ChapterTexture/ChapterTexture}
+\input{ChapterSimulation/ChapterSimulation}
+\input{inputs/conclusions}
+\input{ChapterFrench/frenchSummary}
+
+% *************** Appendixes ***************
+
+\begin{appendix}
+\part*{Appendices}
+\addcontentsline{toc}{part}{Appendix}
+\input{appendix/app1}
+\input{appendix/app2}
+
+\end{appendix}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%% END 
+%%%%%%%%%%%%%%%%%%%%%%%
+\backmatter
+\bibliographystyle{inputs/apalike}
+%\bibliographystyle{plain}
+\bibliography{biblio}
+\addcontentsline{toc}{part}{Bibliography}
+
+\input{inputs/laminaire}
+
+\end{document}
